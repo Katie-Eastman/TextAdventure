@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class Main 
 {
@@ -24,6 +25,10 @@ public class Main
 
                         runChapter3(mainChar, scnr);
 
+                        continueGame(scnr);
+
+                        runChapter4(mainChar, scnr);
+
                         System.out.println("To Be Continued...");
 
                         scnr.close();
@@ -31,7 +36,7 @@ public class Main
         
 
         //This is the player class. It defines variables for the player, as well as constructors for both a standard/neutral character and a custom player character.
-        public class Player 
+        public static class Player 
                 {
                         String name;
                         String proSubj;
@@ -43,18 +48,19 @@ public class Main
                         String attribute;
                         String[] inventory = new String[5]; 
                         String motivation;
+                        public int health = 50;
                         
                         public Player()
                                 {
-                                        name = Stala;
-                                        proSubj = they;
-                                        proObj = them;
-                                        proPossAdj = their;
+                                        name = "Stala";
+                                        proSubj = "they";
+                                        proObj = "them";
+                                        proPossAdj = "their";
                                         age = 23;
                                         gold = 15;
-                                        weapon = revolver;
-                                        attribute = charisma;
-                                        motivation = justice;
+                                        weapon = "revolver";
+                                        attribute = "charisma";
+                                        motivation = "justice";
 
                                         inventory[0] = "bag of gold";
                                         inventory[1] = "5 rations";
@@ -95,11 +101,11 @@ public class Main
                         }
 
                         // this method takes a slot number (1-5) as a parameter and will print what is in that slot in the player's inventory
-                        public void printInventory(int slot, Player player)
+                        public void printInventory(Player player, int slot)
                                 {
-                                if (slot<player.inventory.length + 1 && slot>0)
+                                if (slot<inventory.length + 1 && slot>0)
                                 {
-                                        System.out.println("Inventory item in slot " + slot + ": " + player.inventory[slot - 1]);
+                                        System.out.println("Inventory item in slot " + slot + ": " + inventory[slot - 1]);
                                 }
                                 else
                                 {
@@ -107,6 +113,57 @@ public class Main
                                 }
                         
                         }
+
+                        //this method allows the player to attack an enemy using their weapon of choice, and returns a damage value for damaging the enemy.
+                        public void playerAttack(Player player, Enemy enemy)
+                                {
+                                        int attackDamage = returnRandom(2, 5); 
+                                        enemy.health -= attackDamage;
+
+                                        if (player.weapon.equals("sword"))
+                                        {
+                                                System.out.println(player.name + " swings " + player.proPossAdj + " " + player.weapon + ", dealing " + attackDamage + " points of damage to the " + enemy + ".");
+                                        }
+
+                                        if (player.weapon.equals("bow"))
+                                        {
+                                                System.out.println(player.name + " aims " + player.proPossAdj + " " + player.weapon + " and pierces the " + enemy + " with an arrow, dealing " + attackDamage + " points of damage.");
+                                        }
+
+                                        if (player.weapon.equals("revolver"))
+                                        {
+                                                System.out.println(player.name + " aims " + player.proPossAdj + " " + player.weapon + " and fires a bullet at the " + enemy + ", dealing " + attackDamage + " points of damage.");
+                                        }
+                                        
+                                }
+
+                        public void playerHeal(Player player)
+                                {
+                                        if (player.health == 50)
+                                        {
+                                                System.out.println(player.name + " is at full health.");
+                                        }
+
+                                        if (player.health < 50)
+                                        {
+                                                int amountToHeal = returnRandom(3, 6);
+                                                player.health += amountToHeal;
+
+                                                if (player.health > 50)
+                                                {
+                                                        player.health = 50;
+                                                }
+
+                                                System.out.println(player.name + " draws magical energy from " + player.proPossAdj + " surroundings, and heals for " + amountToHeal + " points.");
+
+                                                displayHealth(player);
+                                        }
+                                }
+
+                        public void displayHealth(Player player)
+                                {
+                                        System.out.println(player.name + " has " + player.health + "/50 health points.");
+                                }
 
                 }
 
@@ -161,7 +218,7 @@ public class Main
 
         
         //This method returns true if the player enters 'y' and false if the player enters anything else
-        public static boolean yesNo()
+        public static boolean yesNo(Scanner in)
                 {
                         char choice = in.next().charAt(0);
 
@@ -181,52 +238,197 @@ public class Main
                 {
                         System.out.print("Continue playing? (y/n): ");
 
-                        while (!yesNo())
+                        while (!yesNo(in))
                                 {
                                         System.out.print("Continue playing? (y/n): ");
-                                        yesNo();
+                                        yesNo(in);
                                 }
                 }
         
-
-        //basic encounter method that allows for the player to fight 3 enemies, and takes enemyType (wolf, bandit, etc) and enemyHealth as parameters. The player does not take damage when this method is used.
-        public static void basicEncounter(String enemyType, int enemyHealth, Player player)
+        //This abstract class lays the framework for what methods and variables a generic enemy object should have.
+        public static abstract class Enemy 
                 {
-                        int[] enemies = new int[3];
+                        int health;
+                        String name;
 
-                        enemies[0] = enemyHealth;
-                        enemies[1] = enemyHealth;
-                        enemies[2] = enemyHealth;
+                        public abstract void attack(Player player);
+                }
+        
+        //The wolf class defines behaviors specific to an enemy type of Wolf.
+        public static class Wolf extends Enemy
+                {
+                        int health;
+                        String name;
 
-                        while (!(enemies[0] <= 0 && enemies[1] <= 0 && enemies[2] <= 0))
+                        public Wolf()
                         {
-                        for (int i = 0; i < enemies.length; ++i)
-                                {
-                                        System.out.println(enemyType + " " + (i+1) + " has " + enemies[i] + " health remaining.");
-                                }
+                                health = 7;
+                                name = "wolf";
+                        }
                         
-                        System.out.print("Which " + enemyType + " should " + player.name + " attack? (1/2/3): ");
-
-                        int enemyToAttack = in.nextInt();
-
-                        int attackDamage = returnRandom(1, enemyHealth - 1);
-
-                        enemies[enemyToAttack - 1] = enemies[enemyToAttack - 1] - attackDamage;
-
-                        System.out.println(name + " attacked " + enemyType + " " + enemyToAttack + " and dealt " + attackDamage + " damage.");
-                        System.out.println("The " + enemyType + " tried to attack " + player.proObj + ", but they missed.");
-
-                        if (enemies[0] <= 0 && enemies[1] <= 0 && enemies[2] <= 0)
+                        public void attack(Player player)
                                 {
-                                        break;
+                                        int attackDamage = returnRandom(1, 4);
+                                        int attackType = returnRandom(1, 2);
+
+                                        if (attackType == 1)
+                                        {
+                                                System.out.println("The wolf lashes out with its claws, dealing " + attackDamage + " points of damage to " + player.name + ".");
+                                        }
+
+                                        if (attackType == 2)
+                                        {
+                                                System.out.println("The wolf lunges to bite " + player.name + ", dealing " + attackDamage + " points of damage.");
+                                        }
+
+                                        player.health -= attackDamage;
                                 }
-                        else
+                }
+
+        //The bandit class defines behaviors specific to an enemy type of bandit.
+        public static class Bandit extends Enemy
+                {
+                        int health;
+                        String name;
+
+                        public Bandit()
+                        {
+                                health = 10;
+                                name = "bandit";
+                        }
+                        
+                        public void attack(Player player)
                                 {
+                                        int attackDamage = returnRandom(2, 5);
+                                        int attackType = returnRandom(1, 2);
+
+                                        if (attackType == 1)
+                                        {
+                                                System.out.println("The bandit bludgeons " + player.name + " with their quarterstaff, dealing " + attackDamage + " points of damage to " + player.name + ".");
+                                        }
+
+                                        if (attackType == 2)
+                                        {
+                                                System.out.println("The bandit slashes with their knife, dealing " + attackDamage + " points of damage to " + player.name + ".");
+                                        }
+
+                                        player.health -= attackDamage;
+                                }
+                }
+        
+        //The spellcaster class defines behaviors specific to an enemy type of spellcaster.
+        public static class Spellcaster extends Enemy
+                {
+                        int health;
+                        String name;
+
+                        public Spellcaster()
+                        {
+                                health = 15;
+                                name = "spellcaster";
+                        }
+                        
+                        public void attack(Player player)
+                                {
+                                        int attackDamage = returnRandom(4, 10);
+                                        int attackType = returnRandom(1, 2);
+
+                                        if (attackType == 1)
+                                        {
+                                                System.out.println("The spellcaster shouts an incantation that causes " + player.name + " to take " + attackDamage + " points of magical damage.");
+                                        }
+
+                                        if (attackType == 2)
+                                        {
+                                                System.out.println("The spellcaster waves their hands in an arc in the air, causing " + player.name + " to take " + attackDamage + " points of magical damage.");
+                                        }
+
+                                        player.health -= attackDamage;
+                                }
+                }
+        
+        //This method can be called to begin and complete an encounter with different types and numbers of enemies.
+        public static void EnemyEncounter(Player player, Scanner in, ArrayList<Enemy> enemyList)
+                {
+                        int round = 1; 
+
+                        System.out.println(player.name + " has entered an encounter. There are " + enemyList.size() + " enemies, of the following types:");
+
+                         for (Enemy enemy : enemyList)
+                                {
+                                        System.out.println(enemy.name + ": " + enemy.health + " health");
+                                }
+                
+                        System.out.println("Each player turn, " + player.name + " may either attack an enemy or heal " + player.proObj + "self. Then, the enemies will take their turn.");
+
+                        while (enemyList.size() > 0)
+                        {
+                                System.out.println("Begin round " + round + ":");
+                                System.out.println("Enemy status:");
+
+                                for (Enemy enemy : enemyList)
+                                {
+                                        System.out.println(enemy.name + ": " + enemy.health + " health");
+                                }
+
+                                player.displayHealth(player);
+                                System.out.println("Should " + player.name + " attack or heal? (attack/heal):");
+                                String choice = in.next();
+
+                                if (choice.equals("attack"))
+                                {
+                                        System.out.println("Which enemy should " + player.name + " attack? Valid responses are 1-" + enemyList.size());
+                                        int enemyToAttack = in.nextInt() - 1;
+                                        player.playerAttack(player, enemyList.get(enemyToAttack));
+                                        
+                                        if (enemyList.get(enemyToAttack).health <= 0)
+                                        {
+                                                enemyList.remove(enemyToAttack);
+                                        }
+
+                                        if (enemyList.size() < 1)
+                                        {
+                                                break;
+                                        }
+                                }
+                                else if (choice.equals("heal"))
+                                {
+                                        player.playerHeal(player);
+                                }
+                                else
+                                {
+                                        System.out.println("Invalid response.");
                                         continue;
                                 }
 
+                                if (enemyList.size() == 0)
+                                {
+                                        break;
+                                }
+
+                                int attackingEnemy = returnRandom(0, enemyList.size());
+
+                                System.out.println("Enemy " + (attackingEnemy + 1) + " takes a turn.");
+
+                                enemyList.get(attackingEnemy).attack(player);
+
+                                if (player.health <= 0)
+                                {
+                                        System.out.println(player.name + "'s health has been depleted.");
+                                        gameOver();
+                                        break;
+                                }
+                                else
+                                {
+                                        System.out.println("End round " + round + ".");
+                                        round++;
+                                        continue;
+                                }
                         }
+
+                        System.out.println("Encounter completed.");
                 }
+
 
         //This method prints to console the first part of the story, using Player player's fields.
         public static void runPrologue(Player player) 
@@ -235,9 +437,9 @@ public class Main
                         System.out.println("~ ~ ~ Adventure Prologue ~ ~ ~");
                         System.out.println(player.name + " set out at dawn, " + player.proPossAdj + " pack light and hopes high.");
                         System.out.println("At only " + player.age + " years old, " + player.proSubj + " already carried stories that most would never dare to tell.");
-                        System.out.println("In the pouch at " + player.proPossAdj + " side clinked " + gold + " gold coins..."
+                        System.out.println("In the pouch at " + player.proPossAdj + " side clinked " + player.gold + " gold coins..."
                                 + "not much, but more than enough for bread and a bed in a quiet inn.");
-                        System.out.println("A weathered sign pointed toward the Whispering Woods, and " + proSubj
+                        System.out.println("A weathered sign pointed toward the Whispering Woods, and " + player.proSubj
                                 + " felt a shiver that had nothing to do with the cold.");
                         System.out.println("Whatever waited beyond the treeline would test " + player.proObj + ", but " + player.name
                                 + " walked on without looking back.");
@@ -286,7 +488,7 @@ public class Main
                                 + season + ", when " + player.proSubj + " noticed that something...wasn't quite right.");
                         System.out.println(player.proSubj + " looked skyward and noticed that the brilliant " + color1 + " of the daytime sky had almost entirely faded into the "
                                 + color2 + " of night.");
-                        System.out.println("Had " + player.proSubj + " really been walking for that long?? According to the map, " + proSubj + " definitely should have found the next town by now.");
+                        System.out.println("Had " + player.proSubj + " really been walking for that long?? According to the map, " + player.proSubj + " definitely should have found the next town by now.");
                         System.out.println("Nervous, " + player.proSubj + " opened up " + player.proPossAdj + " map.");
                         System.out.println("To be lost in the Whispering Woods was a very bad thing...a position that nobody in their right mind wanted to find themselves in.");
                         System.out.println("A sudden SNAP caused " + player.name + " to turn around abruptly. " + player.proSubj + " instinctually reached for " + player.proPossAdj + " " + player.weapon + "."); 
@@ -305,25 +507,13 @@ public class Main
 
                         boolean stolenFrom = false;
 
-                        if (yesNo())
+                        if (yesNo(in))
                                 {
                                         System.out.println("The creature before " + player.proObj + " looked to be just as startled as " + player.proSubj + " were.");
                                         System.out.println(player.name + " took a slow, cautious step forward, " + player.proPossAdj + " grip on " + player.proPossAdj + " " + player.weapon + " slackening slightly.");
-                                        System.out.println("The serpent was 3 good paces away.");
-
-                                        System.out.print("Proceed? (y/n): ");
-                                        int paces = 2;
-
-                                        while (yesNo() && paces > 0)
-                                                {
-                                                        paces = paces - 1;
-                                                        System.out.println(player.name + " took another step forward. There were " + paces + " pace(s) to go.");
-                                                        System.out.print("Proceed? (y/n): ");
-                                                        yesNo();
-                                                }
+                                        System.out.println("The serpent was 3 good paces away, but " + player.name + " continued on with slow, cautious steps.");
                                         
-                                        
-                                        System.out.println(player.proSubj + " stopped, " + paces + " pace(s) away from the beast. Both the creature and " + player.name + " were trembling.");
+                                        System.out.println(player.proSubj + " stopped just one pace away from the beast. Both the creature and " + player.name + " were trembling.");
                                         
                                         System.out.println("The beast bristled, its dark black eyes flicking between the " + player.weapon + " and " + player.name + "'s face.");
                                         System.out.println("As " + player.proSubj + " continued stand still, " + player.proSubj + " noticed the creature was gripping something in its claws. Slowly, cautiously, the serpent opened its hand to reveal its contents.");
@@ -331,7 +521,7 @@ public class Main
                                         System.out.print(player.name + " felt uneasy...should " + player.proSubj + " stay and see what the creature has for them? (y/n): ");
                                         
 
-                                        if (yesNo())
+                                        if (yesNo(in))
                                                 {
                                                         System.out.println(player.proSubj + " decided to stick around and see what the serpent was holding. " + player.proSubj + " stopped in front of the beast and waited.");
                                                         System.out.println("In its hand, outstretched in offering, were 3 golden coins. " + player.name + " furrowed " + player.proPossAdj + " brows, but took the coins despite the confusion.");
@@ -369,10 +559,18 @@ public class Main
                         System.out.println(player.name + "soon came upon a clearing with 3 ravenous wolves snarling at " + player.proObj + ". Lying dead at the wolves' feet was a young man.");
                         System.out.println(player.proSubj + " knew there was no chance of outrunning the wolves..." + player.proSubj + " were going to have to fight. " + player.proSubj + " drew " + player.proPossAdj + " " + player.weapon + ".");
 
-                        basicEncounter("wolf", 5);
+                        ArrayList<Enemy> wolfPack = new ArrayList<Enemy>();
+                        Enemy wolf1 = new Wolf();
+                        Enemy wolf2 = new Wolf();
+                        Enemy wolf3 = new Wolf();
+                        wolfPack.add(wolf1);
+                        wolfPack.add(wolf2);
+                        wolfPack.add(wolf3);
+                        EnemyEncounter(player, in, wolfPack);
+
 
                         System.out.println("After what seemed like an eternity, " + player.name + " finally felled the last wolf. " + player.proSubj + " could not believe " + player.proPossAdj + " luck.");
-                        System.out.println("Before " + player.proObj + " lay the body of a young man who had not been so lucky. " + player.name + " gently closed the man's eyes before " + proSubj + " looked around.");
+                        System.out.println("Before " + player.proObj + " lay the body of a young man who had not been so lucky. " + player.name + " gently closed the man's eyes before " + player.proSubj + " looked around.");
                         System.out.println("To " + player.proPossAdj + " astonishment, following the poor man's shout seemed to have led " + player.proSubj + " right back onto the right path.");
                         System.out.println(player.proSubj + " whispered a thank you to the man, but knew that " + player.proSubj + " could not linger in the woods any longer.");
                         System.out.println(player.proSubj + ", exhausted and with a heavy heart, finally trudged the last half mile or so out of the forest.");
@@ -405,10 +603,10 @@ public class Main
 
                         System.out.print(player.name + " has 5 inventory slots. Check inventory now? (y/n): ");
 
-                        if (yesNo())
+                        if (yesNo(in))
                                 {
                                         System.out.println(player.name + " decided to check " + player.proPossAdj + " inventory.");
-                                        player.printInventory();
+                                        player.printInventory(player);
                                         System.out.println("Everything that should be there was there, and so " + player.name + " sighed in relief.");
                                 }
                         else    
@@ -421,7 +619,7 @@ public class Main
         
         public static void runChapter3(Player player, Scanner in)
                 {
-                        System.out.println("When " + player.name + " opened " + player.proPossAdj + " eyes, " + player.proSubj + " found " + player.proPoss + "self floating in an endless, soundless, colorless abyss.");
+                        System.out.println("When " + player.name + " opened " + player.proPossAdj + " eyes, " + player.proSubj + " found " + player.proPossAdj + "self floating in an endless, soundless, colorless abyss.");
                         System.out.println("When " + player.proSubj + " tried to move, or shout, or see anything at all, " + player.proSubj + " could not. It was as if " + player.proSubj + " could only exist in a state of thought.");
                         System.out.println("Time seemed to stretch on and on, and " + player.name + " was quickly losing hope. Perhaps " + player.proSubj + " should just accept this new reality. Maybe there truly was nothing to be done.");
                         System.out.println("After what felt like a lifetime of lonely nothingness, " + player.name + " heard it...just the faintest whispering, in the back of " + player.proPossAdj + " mind, that did not belong to " + player.proObj + ".");
@@ -452,6 +650,11 @@ public class Main
                                         System.out.println(player.proSubj + " woke with a start, then, alone and safe in " + player.proPossAdj + " bed at the inn.");
                                         System.out.println("Hanging around " + player.proPossAdj + " neck lay a necklace with a milky amber gem that had not been there before.");
                                 }
+                }
+
+        public static void runChapter4(Player player, Scanner in)
+                {
+
                 }
 
 }
