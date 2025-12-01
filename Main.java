@@ -122,17 +122,17 @@ public class Main
 
                                         if (player.weapon.equals("sword"))
                                         {
-                                                System.out.println(player.name + " swings " + player.proPossAdj + " " + player.weapon + ", dealing " + attackDamage + " points of damage to the " + enemy + ".");
+                                                System.out.println(player.name + " swings " + player.proPossAdj + " " + player.weapon + ", dealing " + attackDamage + " points of damage to the " + enemy.name + ".");
                                         }
 
                                         if (player.weapon.equals("bow"))
                                         {
-                                                System.out.println(player.name + " aims " + player.proPossAdj + " " + player.weapon + " and pierces the " + enemy + " with an arrow, dealing " + attackDamage + " points of damage.");
+                                                System.out.println(player.name + " aims " + player.proPossAdj + " " + player.weapon + " and pierces the " + enemy.name + " with an arrow, dealing " + attackDamage + " points of damage.");
                                         }
 
                                         if (player.weapon.equals("revolver"))
                                         {
-                                                System.out.println(player.name + " aims " + player.proPossAdj + " " + player.weapon + " and fires a bullet at the " + enemy + ", dealing " + attackDamage + " points of damage.");
+                                                System.out.println(player.name + " aims " + player.proPossAdj + " " + player.weapon + " and fires a bullet at the " + enemy.name + ", dealing " + attackDamage + " points of damage.");
                                         }
                                         
                                 }
@@ -248,18 +248,25 @@ public class Main
         //This abstract class lays the framework for what methods and variables a generic enemy object should have.
         public static abstract class Enemy 
                 {
-                        int health;
-                        String name;
+                        public int health;
+                        public String name;
 
                         public abstract void attack(Player player);
+
+                        public int getHealth()
+                        {
+                                return health;
+                        }
+
+                        public String getName()
+                        {
+                                return name;
+                        }
                 }
         
         //The wolf class defines behaviors specific to an enemy type of Wolf.
         public static class Wolf extends Enemy
                 {
-                        int health;
-                        String name;
-
                         public Wolf()
                         {
                                 health = 7;
@@ -283,13 +290,14 @@ public class Main
 
                                         player.health -= attackDamage;
                                 }
+
                 }
 
         //The bandit class defines behaviors specific to an enemy type of bandit.
         public static class Bandit extends Enemy
                 {
-                        int health;
-                        String name;
+                        public int health;
+                        public String name;
 
                         public Bandit()
                         {
@@ -319,8 +327,8 @@ public class Main
         //The spellcaster class defines behaviors specific to an enemy type of spellcaster.
         public static class Spellcaster extends Enemy
                 {
-                        int health;
-                        String name;
+                        public int health;
+                        public String name;
 
                         public Spellcaster()
                         {
@@ -352,12 +360,7 @@ public class Main
                 {
                         int round = 1; 
 
-                        System.out.println(player.name + " has entered an encounter. There are " + enemyList.size() + " enemies, of the following types:");
-
-                         for (Enemy enemy : enemyList)
-                                {
-                                        System.out.println(enemy.name + ": " + enemy.health + " health");
-                                }
+                        System.out.println(player.name + " has entered an encounter.");
                 
                         System.out.println("Each player turn, " + player.name + " may either attack an enemy or heal " + player.proObj + "self. Then, the enemies will take their turn.");
 
@@ -368,7 +371,7 @@ public class Main
 
                                 for (Enemy enemy : enemyList)
                                 {
-                                        System.out.println(enemy.name + ": " + enemy.health + " health");
+                                        System.out.println(enemy.getName() + ": " + enemy.getHealth() + " health");
                                 }
 
                                 player.displayHealth(player);
@@ -406,7 +409,7 @@ public class Main
                                         break;
                                 }
 
-                                int attackingEnemy = returnRandom(0, enemyList.size());
+                                int attackingEnemy = returnRandom(0, enemyList.size() - 1);
 
                                 System.out.println("Enemy " + (attackingEnemy + 1) + " takes a turn.");
 
@@ -654,7 +657,7 @@ public class Main
 
         public static void runChapter4(Player player, Scanner in)
                 {
-
+                        
                 }
 
 }
