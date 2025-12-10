@@ -1,22 +1,22 @@
-# CHOOSE YOUR OWN ADVENTURE ~ ~ ~
+# Text Adventure
 
-This Java program is a simple 'choose your own adventure' style short story. 
+# Overview:
+This is a simple, text-based, console program written in Java. 
+It is a 'choose-your-own-adventure' style short story.
+The player will be prompted to give input to create their character, as well as make choices as the game continues. 
+As it is now, there are a few different ways that the player can die, a combat system, and an open-ended 'to be continued' ending. 
 
-INSTALLATION INSTRUCTIONS:
-This program is meant to be run as a console program, so in order to run it, the user must have Java properly installed on their computer.
-In order to install Java, locate the file 'JavaCodingPack-0.4.2.exe' in this application's main folder. Launch the executable.
-Once the Java Coding Pack is installed, you will be able to open the 'Main.java' file to run this console program. Simply click the play/run icon.
+# Installation/Run Instructions:
+This program runs as a console program, and so the user must have Java installed in order to use it.
+Once Java is installed, simply running the Main.java file from this Repo should initiate the game in the console. 
 
-EXAMPLE INPUT AND OUTPUT:
-The player will be presented with a number of questions/prompts to which they will be required to enter input.
-Input types are words, numbers, and input from a set list that will be shown to the player. 
+# Character Randomizer:
+Included in this Repo is another program named CharacterRandomizer.java. 
+This is an addendum program meant to help players randomize stats for a new character before playing the main game, if they so choose. 
+CharacterRandomizer is a simple GUI program that requires both Java and JavaFX to run...both of these must be installed for the program to function properly. 
 
-For example, when prompted by "Enter your character's name:" the player may enter any name/word that they see fit.
-When prompted by "Choose a pronoun subject (he/she/they):" the player must choose and type one of the options presented by the prompt in the parentheses.
-Sometimes the player will be prompted with the options of (y/n). These are choices, and y is a 'yes', while n is a 'no'. These choices will affect the flow of the story.
-
-FUTURE IMPROVEMENTS:
-In the future, I would add a much more detailed system for the player's inventory, attributes, and perhaps appearance. Customization in games is always fun. 
-I would also make the story itself more expansive and engaging. More branching paths and more choices would make for a better experience. 
-In order to do this, however, it will be necessary to add multiple different scripts to the project. Keeping the entire thing under one Main Method/Class is not sustainable long-term.
-I would also like to add more methods and classes to make coding the game more efficient and modular.  
+# Future Improvements:
+There are a great many things that I would like to update and change to improve this Repo in the future with more time.
+First and foremost, I would like to completely overhaul Main.java so that the entire project could use JavaFX and run as a GUI program, rather than just having an addendum GUI program.
+Additionally, I would like to expand upon the story, as well as add more customizability to the player character as well as to encounters. 
+A dialogue system would also be neat to implement, if the story expanded enough to warrant such a thing. 
