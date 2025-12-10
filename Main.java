@@ -27,8 +27,6 @@ public class Main
 
                         continueGame(scnr);
 
-                        runChapter4(mainChar, scnr);
-
                         System.out.println("To Be Continued...");
 
                         scnr.close();
@@ -186,7 +184,7 @@ public class Main
                         player.age = in.nextInt();
                         
                         // --- Determining how much gold the character has with them ---
-                        System.out.print("Enter a whole number between 10 and 30: ");
+                        System.out.print("Enter a whole number between 10 and 30 (starting gold amount):");
                         player.gold = in.nextInt();
 
                         // --- Collecting more character info, focusing on proficiencies/personality ---
@@ -653,11 +651,6 @@ public class Main
                                         System.out.println(player.proSubj + " woke with a start, then, alone and safe in " + player.proPossAdj + " bed at the inn.");
                                         System.out.println("Hanging around " + player.proPossAdj + " neck lay a necklace with a milky amber gem that had not been there before.");
                                 }
-                }
-
-        public static void runChapter4(Player player, Scanner in)
-                {
-                        
                 }
 
 }
